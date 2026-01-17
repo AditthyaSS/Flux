@@ -1,0 +1,68 @@
+
+    def action_toggle_autostart(self) -> None:
+        """Toggle auto-start for new downloads."""
+        self.auto_start_enabled = not self.auto_start_enabled
+        log = self.query_one("#activity_log", ActivityLogWidget)
+        status = "ON" if self.auto_start_enabled else "OFF"
+        log.write(f"[#00d9ff]Auto-start: {status}[/#00d9ff]")
+    
+    def action_focus_next(self) -> None:
+        """Focus next section (Tab key)."""
+        try:
+            sections = ["#activity_log", "#downloads_list"]
+            for section_id in sections:
+                widget = self.query_one(section_id)
+                if widget.has_focus:
+                    idx = sections.index(section_id)
+                    next_id = sections[(idx + 1) % len(sections)]
+                    self.query_one(next_id).focus()
+                    return
+            # Default: focus first
+            self.query_one(sections[0]).focus()
+        except Exception:
+            pass
+    
+    def action_focus_prev(self) -> None:
+        """Focus previous section (Shift+Tab)."""
+        try:
+            sections = ["#activity_log", "#downloads_list"]
+            for section_id in sections:
+                widget = self.query_one(section_id)
+                if widget.has_focus:
+                    idx = sections.index(section_id)
+                    prev_id = sections[(idx - 1) % len(sections)]
+                    self.query_one(prev_id).focus()
+                    return
+            # Default: focus last
+            self.query_one(sections[-1]).focus()
+        except Exception:
+            pass
+    
+    def action_focus_activity(self) -> None:
+        """Focus Activity Log (1 key)."""
+        try:
+            self.query_one("#activity_log").focus()
+        except Exception:
+            pass
+    
+    def action_focus_network(self) -> None:
+        """Focus Network Activity (2 key) - read-only."""
+        log = self.query_one("#activity_log", ActivityLogWidget)
+        log.write("[dim #6b7280]Network is read-only, use 1 or 3[/dim #6b7280]")
+    
+    def action_focus_downloads(self) -> None:
+        """Focus Downloads (3 key)."""
+        try:
+            self.query_one("#downloads_list").focus()
+        except Exception:
+            pass
+    
+    def action_focus_details(self) -> None:
+        """Focus File Details (4 key) - read-only."""
+        log = self.query_one("#activity_log", ActivityLogWidget)
+        log.write("[dim #6b7280]File Details is read-only, use 1 or 3[/dim #6b7280]")
+    
+    def action_quit(self) -> None:
+        """Quit application."""
+        self.exit()
+
