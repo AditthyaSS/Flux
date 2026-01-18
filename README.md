@@ -128,7 +128,7 @@ pip install -e .
 ### Launch the Dashboard
 
 ```bash
-flux
+python -m flux.app
 ```
 
 Press `a` to add a download and watch Flux work its magic! ✨
