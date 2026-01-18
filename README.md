@@ -91,7 +91,33 @@ Real-time network quality indicator with RTT and packet loss metrics.
 
 ```bash
 # From PyPI
+
+Open Cmd
+Check your current python --version
+
+🛠️ Quick Install
 pip install flux-download
+
+🔍 Check version
+python -m flux.cli --version
+
+🖥️ Launch Flux (Dashboard)
+python -m flux.app
+
+➕ Add a real download (inside Flux)
+ Press:a
+
+Paste:
+Paste some link which you wanted to download
+
+Press Enter
+⏯️ Pause / Resume: p
+
+❌ Quit
+q
+
+🧹 Uninstall
+pip uninstall flux-download
 
 # Or clone and install
 git clone https://github.com/aditthyass/flux.git
