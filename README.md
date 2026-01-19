@@ -1,16 +1,12 @@
 <div align="center">
 
-```
- ███████╗██╗     ██╗   ██╗██╗  ██╗
- ██╔════╝██║     ██║   ██║╚██╗██╔╝
- █████╗  ██║     ██║   ██║ ╚███╔╝ 
- ██╔══╝  ██║     ██║   ██║ ██╔██╗ 
- ██║     ███████╗╚██████╔╝██╔╝ ██╗
- ╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝
-```
+<!-- Dynamic Header Banner -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=FLUX&fontSize=80&fontColor=fff&animation=twinkling&fontAlignY=35&desc=Adaptive%20Download%20Manager&descSize=20&descAlignY=55" width="100%"/>
 
-### ⚡ Adaptive • Explainable • Beautiful ⚡
+<!-- Animated Typing Text -->
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=00D9FF&center=true&vCenter=true&multiline=true&repeat=false&width=600&height=60&lines=%E2%9A%A1+Adaptive+%E2%80%A2+Explainable+%E2%80%A2+Beautiful+%E2%9A%A1" alt="Typing SVG" /></a>
 
+<!-- Badges -->
 [![MIT License](https://img.shields.io/badge/License-MIT-00d9ff?style=for-the-badge)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-ff006e?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![Textual TUI](https://img.shields.io/badge/Built_with-Textual-00ff41?style=for-the-badge)](https://github.com/Textualize/textual)
@@ -311,20 +307,15 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-```
-╔══════════════════════════════════════════════════════════════════╗
-║                                                                  ║
-║                       Developed                                  ║
-║                                                                  ║
-║                         by Aditthya S S                          ║
-║                                                                  ║
-║              🌟 For Open Source • Free Forever 🌟               ║
-║                                                                  ║
-╚══════════════════════════════════════════════════════════════════╝
-```
+### 💜 Developed by **Aditthya S S**
+
+**🌟 Open Source • Free Forever 🌟**
 
 **Built with ❤️ using [Textual](https://github.com/Textualize/textual) • [aiohttp](https://docs.aiohttp.org/) • [Rich](https://github.com/Textualize/rich)**
 
 <sub>⭐ Star this repo if you find it useful!</sub>
+
+<!-- Dynamic Footer Wave -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
 
 </div>
