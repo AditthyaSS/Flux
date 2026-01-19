@@ -241,6 +241,62 @@ class AdaptiveDownloadEngine:
         task.status = DownloadStatus.CANCELLED
         self._emit_event("download_cancelled", {"download_id": download_id})
     
+    async def delete_download(self, download_id: str, delete_files: bool = False) -> bool:
+        """
+        Delete a download from the list and optionally from disk.
+        
+        Args:
+            download_id: Download ID
+            delete_files: If True, also delete downloaded files from disk
+            
+        Returns:
+            True if download was deleted, False otherwise
+        """
+        task = self.downloads.get(download_id)
+        if not task:
+            return False
+        
+        filename = task.filename
+        filepath = task.filepath
+        
+        # Cancel if active
+        if task.status == DownloadStatus.ACTIVE:
+            async_task = self._active_tasks.get(download_id)
+            if async_task:
+                async_task.cancel()
+                try:
+                    await async_task
+                except asyncio.CancelledError:
+                    pass
+                self._active_tasks.pop(download_id, None)
+        
+        # Delete files from disk if requested
+        if delete_files:
+            try:
+                writer = AsyncFileWriter(filepath, task.total_size)
+                await writer.cleanup()
+                
+                # Also try to delete the actual file if it exists
+                file_path = Path(filepath)
+                if file_path.exists():
+                    file_path.unlink()
+            except Exception:
+                pass  # File might not exist or be inaccessible
+        
+        # Remove from downloads dict
+        del self.downloads[download_id]
+        
+        self._emit_event(
+            "download_deleted",
+            {
+                "download_id": download_id,
+                "filename": filename,
+                "delete_files": delete_files,
+            },
+        )
+        
+        return True
+    
     async def _download_worker(self, download_id: str) -> None:
         """
         Worker coroutine that performs the download.

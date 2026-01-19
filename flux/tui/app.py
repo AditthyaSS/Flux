@@ -187,6 +187,8 @@ class FluxApp(App):
         ("s", "start", "Start"),
         ("p", "pause", "Pause"),
         ("r", "resume", "Resume"),
+        ("d", "delete", "Delete"),
+        ("shift+d", "delete_with_files", "Del+Files"),
         ("o", "toggle_autostart", "Auto-Start"),
         ("left", "prev_tab", "← Tab"),
         ("right", "next_tab", "Tab →"),
@@ -309,6 +311,14 @@ class FluxApp(App):
             task = self.engine.get_download(download_id)
             if task:
                 log.write(f"[dim #555555]Cancelled: {task.filename}[/dim #555555]")
+        
+        elif event_type == "download_deleted":
+            filename = data.get("filename", "download")
+            delete_files = data.get("delete_files", False)
+            if delete_files:
+                log.write(f"[#ff6b6b]🗑 Deleted: {filename} (files removed)[/#ff6b6b]")
+            else:
+                log.write(f"[#ff6b6b]✗ Removed: {filename}[/#ff6b6b]")
     
     def _update_ui(self) -> None:
         """Update all UI components with latest data."""
@@ -488,10 +498,18 @@ class FluxApp(App):
                     url, path, filename, auto_start=self.auto_start_enabled
                 )
                 
-                # Log appropriate message
+                # Select the new download and switch to appropriate tab
+                self.selected_download_id = download_id
+                
                 if not self.auto_start_enabled:
+                    # Switch to Queued tab and select the new download
+                    self.current_tab_index = 0  # Queued tab
                     log = self.query_one("#activity_log", ActivityLogWidget)
                     log.write(f"[#ffaa00]Queued (auto-start OFF): {filename or 'download'}[/#ffaa00]")
+                else:
+                    # Switch to Active tab
+                    self.current_tab_index = 1  # Active tab
+                    
             except Exception as e:
                 log = self.query_one("#activity_log", ActivityLogWidget)
                 log.write(f"[bold red]Error:[/bold red] {str(e)}")
@@ -558,10 +576,60 @@ class FluxApp(App):
         """Show details panel (already visible, just focus)."""
         pass
     
+    @work(exclusive=True)
+    async def action_delete(self) -> None:
+        """Delete selected download from the list (keep files)."""
+        await self._delete_download(delete_files=False)
+    
+    @work(exclusive=True)
+    async def action_delete_with_files(self) -> None:
+        """Delete selected download and remove files from disk."""
+        await self._delete_download(delete_files=True)
+    
+    async def _delete_download(self, delete_files: bool = False) -> None:
+        """
+        Delete the selected download.
+        
+        Args:
+            delete_files: If True, also delete files from disk
+        """
+        log = self.query_one("#activity_log", ActivityLogWidget)
+        
+        if not self.selected_download_id:
+            log.write("[dim #6b7280]No download selected to delete[/dim #6b7280]")
+            return
+        
+        task = self.engine.get_download(self.selected_download_id)
+        if not task:
+            log.write("[dim #6b7280]Selected download not found[/dim #6b7280]")
+            return
+        
+        # Store info before deletion
+        download_id = self.selected_download_id
+        filename = task.filename
+        
+        # Delete the download
+        success = await self.engine.delete_download(download_id, delete_files=delete_files)
+        
+        if success:
+            # Log success
+            if delete_files:
+                log.write(f"[#ff6b6b]🗑 Deleted: {filename} (files removed)[/#ff6b6b]")
+            else:
+                log.write(f"[#ff6b6b]✗ Removed: {filename}[/#ff6b6b]")
+            
+            # Clear selection and auto-select another download
+            self.selected_download_id = None
+            
+            # Try to select another download in the current tab
+            self._auto_select_first_in_tab()
+        else:
+            log.write(f"[dim #6b7280]Failed to delete: {filename}[/dim #6b7280]")
     
     def action_prev_tab(self) -> None:
         """Switch to previous tab (Done → Active → Queued → Done)."""
         self.current_tab_index = (self.current_tab_index - 1) % 3
+        self._auto_select_first_in_tab()
         
         log = self.query_one("#activity_log", ActivityLogWidget)
         log.write(f"[dim #00ff41]Switched to: {self.tab_names[self.current_tab_index]}[/dim #00ff41]")
@@ -569,9 +637,30 @@ class FluxApp(App):
     def action_next_tab(self) -> None:
         """Switch to next tab (Queued → Active → Done → Queued)."""
         self.current_tab_index = (self.current_tab_index + 1) % 3
+        self._auto_select_first_in_tab()
         
         log = self.query_one("#activity_log", ActivityLogWidget)
         log.write(f"[dim #00ff41]Switched to: {self.tab_names[self.current_tab_index]}[/dim #00ff41]")
+    
+    def _auto_select_first_in_tab(self) -> None:
+        """Auto-select the first download in the current tab."""
+        all_downloads = list(self.engine.downloads.values())
+        current_filter = self.tab_names[self.current_tab_index]
+        
+        # Filter downloads based on current tab
+        if current_filter == "Active":
+            filtered = [d for d in all_downloads if d.status == DownloadStatus.ACTIVE]
+        elif current_filter == "Queued":
+            filtered = [d for d in all_downloads if d.status in [DownloadStatus.QUEUED, DownloadStatus.PAUSED]]
+        else:  # Done
+            filtered = [d for d in all_downloads if d.status == DownloadStatus.COMPLETED]
+        
+        # Select first in the filtered list, or clear selection if empty
+        if filtered:
+            self.selected_download_id = filtered[0].id
+        else:
+            self.selected_download_id = None
+    
     
     def action_next_download(self) -> None:
         """Select next download in current tab."""

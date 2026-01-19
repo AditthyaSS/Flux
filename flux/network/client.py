@@ -16,7 +16,7 @@ class AdaptiveHTTPClient:
     
     def __init__(
         self,
-        timeout: int = 30,
+        timeout: int = 10,
         max_retries: int = 3,
     ) -> None:
         """
@@ -85,8 +85,11 @@ class AdaptiveHTTPClient:
         
         start_time = time.time()
         
+        # Use a shorter timeout for HEAD requests (5 seconds)
+        head_timeout = aiohttp.ClientTimeout(total=5)
+        
         try:
-            async with self._session.head(url, allow_redirects=True) as response:
+            async with self._session.head(url, allow_redirects=True, timeout=head_timeout) as response:
                 response.raise_for_status()
                 
                 # Get file size

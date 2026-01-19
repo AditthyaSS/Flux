@@ -157,6 +157,8 @@ flux-cli download https://example.com/file.zip --output ~/Downloads
 | `S` | Start queued download |
 | `P` | Pause active download |
 | `R` | Resume paused download |
+| `D` | Delete from list |
+| `Shift+D` | Delete + remove files |
 | `O` | Toggle auto-start |
 
 </td>

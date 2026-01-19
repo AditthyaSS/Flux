@@ -285,14 +285,14 @@ Auto-start: OFF  ← New downloads stay queued
 ║  S  → Start selected          ←→ → Switch tabs                ║
 ║  P  → Pause selected          Tab → Next section              ║
 ║  R  → Resume selected         1-4 → Jump to section           ║
-║  O  → Toggle auto-start                                       ║
-║                                                               ║
-║  GENERAL                      SECTIONS                        ║
-║  ───────                      ────────                        ║
-║  Q  → Quit Flux               1 → Activity Log                ║
-║  Esc → Close dialog           2 → Network (read-only)         ║
-║                               3 → Downloads                    ║
-║                               4 → Details (read-only)         ║
+║  D  → Delete from list                                        ║
+║  Shift+D → Delete + files     SECTIONS                        ║
+║  O  → Toggle auto-start       ────────                        ║
+║                               1 → Activity Log                ║
+║  GENERAL                      2 → Network (read-only)         ║
+║  ───────                      3 → Downloads                   ║
+║  Q  → Quit Flux               4 → Details (read-only)         ║
+║  Esc → Close dialog                                           ║
 ╚═══════════════════════════════════════════════════════════════╝
 ```
 
